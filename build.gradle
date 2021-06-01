@@ -49,7 +49,7 @@ jar {
     from "LICENSE.md"
 }
 
-def static getVersionMetadata() {
+def getVersionMetadata() {
     def build_id = System.getenv("GITHUB_RUN_NUMBER")
 
     // GitHub CI builds only
