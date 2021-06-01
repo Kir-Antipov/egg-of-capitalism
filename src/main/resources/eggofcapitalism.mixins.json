@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "me.kirantipov.mods.eggofcapitalism.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "MixinEnderDragonFight",
+    "MixinLivingEntity"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
