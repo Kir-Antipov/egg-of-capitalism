@@ -37,10 +37,22 @@ You can download the mod from:
 Requirements:
  - JDK `8`
 
+### Linux/MacOS
+
 ```cmd
 git clone https://github.com/Kir-Antipov/egg-of-capitalism.git
 cd egg-of-capitalism
 
+chmod +x ./gradlew
 ./gradlew build
+cd build/libs
+```
+### Windows
+
+```cmd
+git clone https://github.com/Kir-Antipov/egg-of-capitalism.git
+cd egg-of-capitalism
+
+gradlew build
 cd build/libs
 ```

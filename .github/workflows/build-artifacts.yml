@@ -15,6 +15,9 @@ jobs:
           distribution: 'adopt'
           java-version: 8
 
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
       - name: Build artifacts
         run: ./gradlew build
 
