@@ -1,9 +1,9 @@
 package me.kirantipov.mods.eggofcapitalism.mixin;
 
 import me.kirantipov.mods.eggofcapitalism.entity.DamageableEntity;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.boss.ServerBossBar;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.boss.dragon.EnderDragonFight;
 import net.minecraft.entity.damage.DamageSource;
@@ -13,11 +13,12 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtHelper;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.gen.feature.EndPortalFeature;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -33,28 +34,12 @@ import java.util.UUID;
  */
 @Mixin(EnderDragonFight.class)
 public abstract class MixinEnderDragonFight {
-    @Final
-    @Shadow
-    private ServerBossBar bossBar;
-
     @Shadow
     private UUID dragonUuid;
-
-    @Shadow
-    protected abstract void generateEndPortal(boolean previouslyKilled);
-
-    @Shadow
-    protected abstract void generateNewEndGateway();
 
     @Final
     @Shadow
     private ServerWorld world;
-
-    @Shadow
-    private boolean previouslyKilled;
-
-    @Shadow
-    private boolean dragonKilled;
 
     private Set<UUID> dragonKilledBy;
     private final String DRAGON_KILLED_BY_TAG_NAME = "DragonKilledBy";
@@ -98,43 +83,25 @@ public abstract class MixinEnderDragonFight {
     }
 
     /**
-     * Handles the dragon kill event.
-     *
-     * @param dragon The dragon that was slain.
-     *
-     * @author Kir_Antipov
-     *
-     * @reason
-     * Technically, it is possible to implement the mixin
-     * without overwriting the whole method,
-     * but it will be easier, cleaner and more reliable this way.
-     */
-    @Overwrite
-    public void dragonKilled(EnderDragonEntity dragon) {
-        if (dragon.getUuid().equals(this.dragonUuid)) {
-            this.bossBar.setPercent(0.0F);
-            this.bossBar.setVisible(false);
-            this.generateEndPortal(true);
-            this.generateDragonEggIfNeeded(dragon);
-            this.generateNewEndGateway();
-            this.previouslyKilled = true;
-            this.dragonKilled = true;
-        }
-    }
-
-    /**
      * Generates a dragon egg if all conditions are met.
      *
      * @param dragon The dragon that was slain.
+     * @param ci Callback information.
      */
-    private void generateDragonEggIfNeeded(EnderDragonEntity dragon) {
-        Entity killer = getDragonKiller(dragon);
-        if (killer instanceof PlayerEntity && !dragonKilledBy.contains(killer.getUuid())) {
-            dragonKilledBy.add(killer.getUuid());
-            this.world.setBlockState(
-                this.world.getTopPosition(Heightmap.Type.MOTION_BLOCKING, EndPortalFeature.ORIGIN),
-                Blocks.DRAGON_EGG.getDefaultState()
-            );
+    @Inject(method = "dragonKilled", at = @At("TAIL"))
+    private void generateDragonEggIfNeeded(EnderDragonEntity dragon, CallbackInfo ci) {
+        if (dragon.getUuid().equals(this.dragonUuid)) {
+            Entity killer = getDragonKiller(dragon);
+            if (killer instanceof PlayerEntity && !dragonKilledBy.contains(killer.getUuid())) {
+                dragonKilledBy.add(killer.getUuid());
+
+                // If the egg hasn't been generated yet by something else (e.g., another mod), generate it now.
+                BlockPos endPortalTop = this.world.getTopPosition(Heightmap.Type.MOTION_BLOCKING, EndPortalFeature.ORIGIN);
+                BlockState existingState = this.world.getBlockState(endPortalTop.offset(Direction.DOWN));
+                if (existingState == null || !existingState.getBlock().is(Blocks.DRAGON_EGG)) {
+                    this.world.setBlockState(endPortalTop, Blocks.DRAGON_EGG.getDefaultState());
+                }
+            }
         }
     }
 
