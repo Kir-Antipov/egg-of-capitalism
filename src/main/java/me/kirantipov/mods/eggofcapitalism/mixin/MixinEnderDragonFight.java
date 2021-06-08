@@ -1,6 +1,6 @@
 package me.kirantipov.mods.eggofcapitalism.mixin;
 
-import me.kirantipov.mods.eggofcapitalism.client.DamageableEntity;
+import me.kirantipov.mods.eggofcapitalism.entity.DamageableEntity;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.ServerBossBar;

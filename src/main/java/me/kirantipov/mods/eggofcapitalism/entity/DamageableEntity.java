@@ -1,4 +1,4 @@
-package me.kirantipov.mods.eggofcapitalism.client;
+package me.kirantipov.mods.eggofcapitalism.entity;
 
 import net.minecraft.entity.damage.DamageSource;
 

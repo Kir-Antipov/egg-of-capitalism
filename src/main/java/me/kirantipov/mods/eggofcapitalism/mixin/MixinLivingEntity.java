@@ -1,6 +1,6 @@
 package me.kirantipov.mods.eggofcapitalism.mixin;
 
-import me.kirantipov.mods.eggofcapitalism.client.DamageableEntity;
+import me.kirantipov.mods.eggofcapitalism.entity.DamageableEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import org.spongepowered.asm.mixin.Mixin;
