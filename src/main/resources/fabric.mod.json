@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "eggofcapitalism",
   "version": "${version}",
-  "name": "EggOfCapitalism",
+  "name": "Egg Of Capitalism",
   "description": "Get a dragon egg for every \"The End.\" achievement.",
   "authors": [
     "Kir_Antipov"
@@ -20,7 +20,7 @@
     "eggofcapitalism.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.10.0",
-    "minecraft": "1.16.x"
+    "fabricloader": "${fabric}",
+    "minecraft": "${minecraft}"
   }
 }

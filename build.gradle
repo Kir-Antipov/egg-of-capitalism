@@ -6,9 +6,12 @@ plugins {
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
-archivesBaseName = "${project.archives_base_name}-mc${project.minecraft_version}"
-version = "${project.mod_version}+${getVersionMetadata()}"
+def loaderDependencyVersion = ">=${project.loader_version.split(/\+/)[0]}"
+def minecraftDependencyVersion = project.minecraft_version.split(/[+ -]/)[0].replaceAll(/\.\d+$/, ".x")
+
 group = project.maven_group
+version = "${project.mod_version}${getVersionMetadata()}"
+archivesBaseName = "${project.archives_base_name}-mc${minecraftDependencyVersion}"
 
 dependencies {
     //to change the versions see the gradle.properties file
@@ -18,11 +21,15 @@ dependencies {
 }
 
 processResources {
-    inputs.property "version", project.version
+    def fabricModProperties = [
+        "version": version,
+        "fabric": loaderDependencyVersion,
+        "minecraft": minecraftDependencyVersion
+    ]
 
     from(sourceSets.main.resources.srcDirs) {
         include "fabric.mod.json"
-        expand "version": project.version
+        expand fabricModProperties
     }
 
     from(sourceSets.main.resources.srcDirs) {
@@ -50,11 +57,16 @@ jar {
 }
 
 def getVersionMetadata() {
-    def build_id = System.getenv("GITHUB_RUN_NUMBER")
+    // Release builds don't require additional metadata
+    def release_tag = System.getenv("RELEASE_TAG")
+    if (release_tag != null && release_tag.length() != 0) {
+        return ""
+    }
 
     // GitHub CI builds only
-    if (build_id != null) {
-        return "build.${build_id}"
+    def build_id = System.getenv("GITHUB_RUN_NUMBER")
+    if (build_id != null && build_id.length() != 0) {
+        return "+build.${build_id}"
     }
 
     if (grgit != null) {
@@ -66,9 +78,9 @@ def getVersionMetadata() {
             id += "-dirty"
         }
 
-        return "rev.${id}"
+        return "+rev.${id}"
     }
 
     // No tracking information could be found about the build
-    return "unknown"
+    return "+unknown"
 }
