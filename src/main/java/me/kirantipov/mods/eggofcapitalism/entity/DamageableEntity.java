@@ -1,17 +1,16 @@
 package me.kirantipov.mods.eggofcapitalism.entity;
 
-import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.Entity;
 
 /**
  * Represents an entity that can take damage.
  */
 public interface DamageableEntity {
-
     /**
-     * Returns the last damage source, if present;
-     * otherwise null.
+     * Returns the killer of the entity, if any;
+     * otherwise, null.
      *
-     * @return The last damage source, if any; otherwise null.
+     * @return The killer of the entity, if any; otherwise, null.
      */
-    DamageSource getLastDamageSource();
+    Entity getKiller();
 }

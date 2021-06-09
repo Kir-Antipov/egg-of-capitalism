@@ -1,17 +1,14 @@
 package me.kirantipov.mods.eggofcapitalism.mixin;
 
 import me.kirantipov.mods.eggofcapitalism.entity.DamageableEntity;
+import me.kirantipov.mods.eggofcapitalism.util.CompoundHelper;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.boss.dragon.EnderDragonFight;
-import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtHelper;
-import net.minecraft.nbt.Tag;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -42,7 +39,7 @@ public abstract class MixinEnderDragonFight {
     private ServerWorld world;
 
     private Set<UUID> dragonKilledBy;
-    private final String DRAGON_KILLED_BY_TAG_NAME = "DragonKilledBy";
+    private static final String DRAGON_KILLED_BY_TAG_NAME = "DragonKilledBy";
 
     /**
      * Initializes `dragonKilledBy` field.
@@ -56,11 +53,7 @@ public abstract class MixinEnderDragonFight {
     private void onInit(ServerWorld world, long l, CompoundTag compoundTag, CallbackInfo ci) {
         dragonKilledBy = new HashSet<>();
         if (compoundTag.contains(DRAGON_KILLED_BY_TAG_NAME)) {
-            final int INT_ARRAY_TYPE = 11;
-            ListTag list = compoundTag.getList(DRAGON_KILLED_BY_TAG_NAME, INT_ARRAY_TYPE);
-            for (Tag tag : list) {
-                dragonKilledBy.add(NbtHelper.toUuid(tag));
-            }
+            CompoundHelper.copyUuidListTo(compoundTag, DRAGON_KILLED_BY_TAG_NAME, dragonKilledBy);
         }
     }
 
@@ -71,15 +64,7 @@ public abstract class MixinEnderDragonFight {
      */
     @Inject(method = "toTag()Lnet/minecraft/nbt/CompoundTag;", at = @At("RETURN"), cancellable = true)
     private void addDragonKilledByToTag(CallbackInfoReturnable<CompoundTag> cir) {
-        CompoundTag tag = cir.getReturnValue();
-
-        ListTag listTag = new ListTag();
-        for (UUID uuid : dragonKilledBy) {
-            listTag.add(NbtHelper.fromUuid(uuid));
-        }
-
-        tag.put(DRAGON_KILLED_BY_TAG_NAME, listTag);
-        cir.setReturnValue(tag);
+        CompoundHelper.putUuidList(cir.getReturnValue(), DRAGON_KILLED_BY_TAG_NAME, dragonKilledBy);
     }
 
     /**
@@ -91,7 +76,7 @@ public abstract class MixinEnderDragonFight {
     @Inject(method = "dragonKilled", at = @At("TAIL"))
     private void generateDragonEggIfNeeded(EnderDragonEntity dragon, CallbackInfo ci) {
         if (dragon.getUuid().equals(this.dragonUuid)) {
-            Entity killer = getDragonKiller(dragon);
+            Entity killer = ((DamageableEntity)dragon).getKiller();
             if (killer instanceof PlayerEntity && !dragonKilledBy.contains(killer.getUuid())) {
                 dragonKilledBy.add(killer.getUuid());
 
@@ -103,25 +88,5 @@ public abstract class MixinEnderDragonFight {
                 }
             }
         }
-    }
-
-    /**
-     * Returns the brave warrior who defeated the dragon.
-     *
-     * @param dragon The dragon that was slain.
-     * @return The entity that dealt the final blow to the dragon, if any; otherwise, null.
-     */
-    private static Entity getDragonKiller(EnderDragonEntity dragon) {
-        Entity attacker = dragon.getAttacker();
-        if (attacker != null) {
-            return attacker;
-        }
-
-        DamageSource source = ((DamageableEntity)dragon).getLastDamageSource();
-        if (source != null) {
-            return source.getSource();
-        }
-
-        return null;
     }
 }
