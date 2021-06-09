@@ -9,6 +9,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.boss.dragon.EnderDragonFight;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
@@ -86,6 +87,10 @@ public abstract class MixinEnderDragonFight {
     private void generateDragonEggIfNeeded(EnderDragonEntity dragon, CallbackInfo ci) {
         if (dragon.getUuid().equals(this.dragonUuid)) {
             Entity killer = ((DamageableEntity)dragon).getKiller();
+            if (killer instanceof ProjectileEntity) {
+                killer = ((ProjectileEntity)killer).getOwner();
+            }
+
             if (killer instanceof PlayerEntity && !dragonKilledBy.contains(killer.getUuid())) {
                 dragonKilledBy.add(killer.getUuid());
 
