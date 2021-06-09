@@ -2,6 +2,7 @@ package me.kirantipov.mods.eggofcapitalism.mixin;
 
 import me.kirantipov.mods.eggofcapitalism.entity.DamageableEntity;
 import me.kirantipov.mods.eggofcapitalism.util.CompoundHelper;
+import me.kirantipov.mods.eggofcapitalism.util.OfflineAdvancementManager;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
@@ -9,7 +10,9 @@ import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.boss.dragon.EnderDragonFight;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.Heightmap;
@@ -51,9 +54,15 @@ public abstract class MixinEnderDragonFight {
      */
     @Inject(method = "<init>(Lnet/minecraft/server/world/ServerWorld;JLnet/minecraft/nbt/CompoundTag;)V", at = @At("RETURN"))
     private void onInit(ServerWorld world, long l, CompoundTag compoundTag, CallbackInfo ci) {
-        dragonKilledBy = new HashSet<>();
         if (compoundTag.contains(DRAGON_KILLED_BY_TAG_NAME)) {
+            dragonKilledBy = new HashSet<>();
             CompoundHelper.copyUuidListTo(compoundTag, DRAGON_KILLED_BY_TAG_NAME, dragonKilledBy);
+        } else if (!world.isClient) {
+            Identifier theEndAdvancement = new Identifier("end/kill_dragon");
+            MinecraftServer server = world.getServer();
+            dragonKilledBy = OfflineAdvancementManager.findPlayersByAdvancement(server, theEndAdvancement);
+        } else {
+            dragonKilledBy = new HashSet<>();
         }
     }
 
