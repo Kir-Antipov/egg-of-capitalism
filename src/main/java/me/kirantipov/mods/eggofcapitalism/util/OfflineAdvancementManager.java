@@ -28,7 +28,7 @@ public final class OfflineAdvancementManager {
      *
      * @return a set of UUIDs of players who have achieved the specified advancement.
      */
-    public static Set<UUID> findPlayersByAdvancement(MinecraftServer server, Identifier advancementId) {
+    public static HashSet<UUID> findPlayersByAdvancement(MinecraftServer server, Identifier advancementId) {
         Path advancementsPath = server.getSavePath(WorldSavePath.ADVANCEMENTS);
         String id = advancementId.toString();
         try {
@@ -54,11 +54,11 @@ public final class OfflineAdvancementManager {
                     return null;
                 })
                 .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toCollection(HashSet::new));
         } catch (Throwable e) {
             LOGGER.error(e);
         }
 
-        return Collections.emptySet();
+        return new HashSet<>();
     }
 }
