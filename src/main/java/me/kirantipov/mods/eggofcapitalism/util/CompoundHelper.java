@@ -1,9 +1,9 @@
 package me.kirantipov.mods.eggofcapitalism.util;
 
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtHelper;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.NbtList;
 
 import java.util.Collection;
 import java.util.UUID;
@@ -19,10 +19,10 @@ public final class CompoundHelper {
      * @param key The key.
      * @param collection Target collection.
      */
-    public static void copyUuidListTo(CompoundTag tag, String key, Collection<UUID> collection) {
+    public static void copyUuidListTo(NbtCompound tag, String key, Collection<UUID> collection) {
         final int INT_ARRAY_TYPE = 11;
-        ListTag list = tag.getList(key, INT_ARRAY_TYPE);
-        for (Tag listEntry : list) {
+        NbtList list = tag.getList(key, INT_ARRAY_TYPE);
+        for (NbtElement listEntry : list) {
             collection.add(NbtHelper.toUuid(listEntry));
         }
     }
@@ -34,8 +34,8 @@ public final class CompoundHelper {
      * @param key The key.
      * @param collection The collection to retrieve data from.
      */
-    public static void putUuidList(CompoundTag tag, String key, Collection<UUID> collection) {
-        ListTag listTag = new ListTag();
+    public static void putUuidList(NbtCompound tag, String key, Collection<UUID> collection) {
+        NbtList listTag = new NbtList();
         for (UUID uuid : collection) {
             listTag.add(NbtHelper.fromUuid(uuid));
         }

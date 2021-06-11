@@ -10,7 +10,7 @@ import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.boss.dragon.EnderDragonFight;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
@@ -53,8 +53,8 @@ public abstract class MixinEnderDragonFight {
      * @param compoundTag NBT that can be used to restore the current state of the EnderDragonFight object.
      * @param ci Callback information.
      */
-    @Inject(method = "<init>(Lnet/minecraft/server/world/ServerWorld;JLnet/minecraft/nbt/CompoundTag;)V", at = @At("RETURN"))
-    private void onInit(ServerWorld world, long l, CompoundTag compoundTag, CallbackInfo ci) {
+    @Inject(method = "<init>(Lnet/minecraft/server/world/ServerWorld;JLnet/minecraft/nbt/NbtCompound;)V", at = @At("RETURN"))
+    private void onInit(ServerWorld world, long l, NbtCompound compoundTag, CallbackInfo ci) {
         if (compoundTag.contains(DRAGON_KILLED_BY_TAG_NAME)) {
             dragonKilledBy = new HashSet<>();
             CompoundHelper.copyUuidListTo(compoundTag, DRAGON_KILLED_BY_TAG_NAME, dragonKilledBy);
@@ -72,8 +72,8 @@ public abstract class MixinEnderDragonFight {
      *
      * @param cir Callback information.
      */
-    @Inject(method = "toTag()Lnet/minecraft/nbt/CompoundTag;", at = @At("RETURN"), cancellable = true)
-    private void addDragonKilledByToTag(CallbackInfoReturnable<CompoundTag> cir) {
+    @Inject(method = "toNbt()Lnet/minecraft/nbt/NbtCompound;", at = @At("RETURN"), cancellable = true)
+    private void addDragonKilledByToTag(CallbackInfoReturnable<NbtCompound> cir) {
         CompoundHelper.putUuidList(cir.getReturnValue(), DRAGON_KILLED_BY_TAG_NAME, dragonKilledBy);
     }
 
@@ -97,7 +97,7 @@ public abstract class MixinEnderDragonFight {
                 // If the egg hasn't been generated yet by something else (e.g., another mod), generate it now.
                 BlockPos endPortalTop = this.world.getTopPosition(Heightmap.Type.MOTION_BLOCKING, EndPortalFeature.ORIGIN);
                 BlockState existingState = this.world.getBlockState(endPortalTop.offset(Direction.DOWN));
-                if (existingState == null || !existingState.getBlock().is(Blocks.DRAGON_EGG)) {
+                if (existingState == null || !existingState.isOf(Blocks.DRAGON_EGG)) {
                     this.world.setBlockState(endPortalTop, Blocks.DRAGON_EGG.getDefaultState());
                 }
             }
