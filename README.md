@@ -22,8 +22,8 @@ This mod approaches the issue from a different side: each person who **kills the
 ## Installation
 
 Requirements:
- - Minecraft `1.16.x`
- - Fabric Loader `>=0.10.0`
+ - Minecraft `1.17.x`
+ - Fabric Loader `>=0.11.3`
 
 You can download the mod from:
 
@@ -35,7 +35,7 @@ You can download the mod from:
 ## Building from sources
 
 Requirements:
- - JDK `8`
+ - JDK `16`
 
 ### Linux/MacOS
 
