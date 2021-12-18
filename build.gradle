@@ -6,7 +6,7 @@ plugins {
 sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
 
-def minecraftDependencyVersion = ">=${project.minecraft_version.split(/[+ -]/)[0]}"
+def minecraftDependencyVersion = project.minecraft_version.split(/[+ -]/)[0]
 
 group = project.maven_group
 version = "${project.mod_version}${getVersionMetadata()}"
@@ -22,7 +22,7 @@ dependencies {
 processResources {
     def fabricModProperties = [
         "version": version,
-        "minecraft": minecraftDependencyVersion
+        "minecraft": ">=${project.minecraft_version.split(/[+ -]/)[0]}"
     ]
 
     filesMatching("fabric.mod.json") {
