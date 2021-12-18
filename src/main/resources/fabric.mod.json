@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "eggofcapitalism",
+  "id": "egg-of-capitalism",
   "version": "${version}",
   "name": "Egg Of Capitalism",
   "description": "Get a dragon egg for every \"The End.\" achievement.",
@@ -13,11 +13,11 @@
     "issues": "https://github.com/Kir-Antipov/egg-of-capitalism/issues/new/choose"
   },
   "license": "MIT",
-  "icon": "assets/eggofcapitalism/icon.png",
+  "icon": "assets/egg-of-capitalism/icon.png",
   "environment": "*",
   "entrypoints": {},
   "mixins": [
-    "eggofcapitalism.mixins.json"
+    "egg-of-capitalism.mixins.json"
   ],
   "depends": {
     "fabricloader": "${fabric}",
