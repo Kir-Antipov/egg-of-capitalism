@@ -19,6 +19,12 @@
   "mixins": [
     "egg-of-capitalism.mixins.json"
   ],
+  "custom": {
+    "modmanager": {
+      "modrinth": "llThBwQo",
+      "curseforge": 490007
+    }
+  },
   "depends": {
     "fabricloader": "${fabric}",
     "minecraft": "${minecraft}",
