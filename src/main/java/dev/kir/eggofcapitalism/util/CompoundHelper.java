@@ -1,4 +1,4 @@
-package me.kirantipov.mods.eggofcapitalism.util;
+package dev.kir.eggofcapitalism.util;
 
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;

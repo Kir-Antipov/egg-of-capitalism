@@ -1,4 +1,4 @@
-package me.kirantipov.mods.eggofcapitalism.entity;
+package dev.kir.eggofcapitalism.entity;
 
 import net.minecraft.entity.Entity;
 

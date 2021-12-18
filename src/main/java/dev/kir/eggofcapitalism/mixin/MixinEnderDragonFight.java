@@ -1,8 +1,8 @@
-package me.kirantipov.mods.eggofcapitalism.mixin;
+package dev.kir.eggofcapitalism.mixin;
 
-import me.kirantipov.mods.eggofcapitalism.entity.DamageableEntity;
-import me.kirantipov.mods.eggofcapitalism.util.CompoundHelper;
-import me.kirantipov.mods.eggofcapitalism.util.OfflineAdvancementManager;
+import dev.kir.eggofcapitalism.entity.DamageableEntity;
+import dev.kir.eggofcapitalism.util.CompoundHelper;
+import dev.kir.eggofcapitalism.util.OfflineAdvancementManager;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;

@@ -1,4 +1,4 @@
-package me.kirantipov.mods.eggofcapitalism.util;
+package dev.kir.eggofcapitalism.util;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
