@@ -56,14 +56,14 @@ public abstract class MixinEnderDragonFight {
     @Inject(method = "<init>(Lnet/minecraft/server/world/ServerWorld;JLnet/minecraft/nbt/NbtCompound;)V", at = @At("RETURN"))
     private void onInit(ServerWorld world, long l, NbtCompound compoundTag, CallbackInfo ci) {
         if (compoundTag.contains(DRAGON_KILLED_BY_TAG_NAME)) {
-            dragonKilledBy = new HashSet<>();
+            this.dragonKilledBy = new HashSet<>();
             CompoundHelper.copyUuidListTo(compoundTag, DRAGON_KILLED_BY_TAG_NAME, dragonKilledBy);
         } else if (!world.isClient) {
             Identifier theEndAdvancement = new Identifier("end/kill_dragon");
             MinecraftServer server = world.getServer();
-            dragonKilledBy = OfflineAdvancementManager.findPlayersByAdvancement(server, theEndAdvancement);
+            this.dragonKilledBy = OfflineAdvancementManager.findPlayersByAdvancement(server, theEndAdvancement);
         } else {
-            dragonKilledBy = new HashSet<>();
+            this.dragonKilledBy = new HashSet<>();
         }
     }
 
@@ -74,7 +74,7 @@ public abstract class MixinEnderDragonFight {
      */
     @Inject(method = "toNbt()Lnet/minecraft/nbt/NbtCompound;", at = @At("RETURN"), cancellable = true)
     private void addDragonKilledByToTag(CallbackInfoReturnable<NbtCompound> cir) {
-        CompoundHelper.putUuidList(cir.getReturnValue(), DRAGON_KILLED_BY_TAG_NAME, dragonKilledBy);
+        CompoundHelper.putUuidList(cir.getReturnValue(), DRAGON_KILLED_BY_TAG_NAME, this.dragonKilledBy);
     }
 
     /**
@@ -91,8 +91,8 @@ public abstract class MixinEnderDragonFight {
                 killer = ((ProjectileEntity)killer).getOwner();
             }
 
-            if (killer instanceof PlayerEntity && !dragonKilledBy.contains(killer.getUuid())) {
-                dragonKilledBy.add(killer.getUuid());
+            if (killer instanceof PlayerEntity && !this.dragonKilledBy.contains(killer.getUuid())) {
+                this.dragonKilledBy.add(killer.getUuid());
 
                 // If the egg hasn't been generated yet by something else (e.g., another mod), generate it now.
                 BlockPos endPortalTop = this.world.getTopPosition(Heightmap.Type.MOTION_BLOCKING, EndPortalFeature.ORIGIN);

@@ -21,6 +21,7 @@ public abstract class MixinLivingEntity implements DamageableEntity {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Entity getKiller() {
         Entity attacker = this.getAttacker();
         if (attacker != null) {

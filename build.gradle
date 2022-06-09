@@ -1,6 +1,6 @@
 plugins {
-    id 'fabric-loom' version '0.10-SNAPSHOT'
-    id 'org.ajoberstar.grgit' version '4.1.0'
+    id "fabric-loom" version "0.12-SNAPSHOT"
+    id "org.ajoberstar.grgit" version "4.1.0"
 }
 
 sourceCompatibility = JavaVersion.VERSION_17
@@ -13,7 +13,6 @@ version = "${project.mod_version}${getVersionMetadata()}"
 archivesBaseName = "${project.archives_base_name}-mc${minecraftDependencyVersion}"
 
 dependencies {
-    //to change the versions see the gradle.properties file
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
@@ -22,7 +21,7 @@ dependencies {
 processResources {
     def fabricModProperties = [
         "version": version,
-        "minecraft": ">=${project.minecraft_version.split(/[+ -]/)[0]}"
+        "minecraft": ">=${minecraftDependencyVersion.replaceFirst(/^(\d+\.\d+)(\.\d+|)$/, '$1')}"
     ]
 
     filesMatching("fabric.mod.json") {
@@ -48,22 +47,22 @@ jar {
     from "LICENSE.md"
 }
 
-def getVersionMetadata() {
+@SuppressWarnings("GrMethodMayBeStatic") // It cannot
+String getVersionMetadata() {
     // Release builds don't require additional metadata
-    def release_tag = System.getenv("RELEASE_TAG")
-    if (release_tag != null && release_tag.length() != 0) {
+    String ref = System.getenv("GITHUB_REF")
+    if (ref != null && ref.startsWith("refs/tags/")) {
         return ""
     }
 
     // GitHub CI builds only
-    def build_id = System.getenv("GITHUB_RUN_NUMBER")
+    String build_id = System.getenv("GITHUB_RUN_NUMBER")
     if (build_id != null && build_id.length() != 0) {
         return "+build.${build_id}"
     }
 
-    if (grgit != null) {
-        def head = grgit.head()
-        def id = head.abbreviatedId
+    if (grgit != null && grgit.head() != null) {
+        def id = grgit.head().abbreviatedId
 
         // Flag the build if the build tree is not clean
         if (!grgit.status().clean) {

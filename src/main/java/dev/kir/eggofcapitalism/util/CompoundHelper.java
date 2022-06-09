@@ -20,8 +20,7 @@ public final class CompoundHelper {
      * @param collection Target collection.
      */
     public static void copyUuidListTo(NbtCompound tag, String key, Collection<UUID> collection) {
-        final int INT_ARRAY_TYPE = 11;
-        NbtList list = tag.getList(key, INT_ARRAY_TYPE);
+        NbtList list = tag.getList(key, NbtElement.INT_ARRAY_TYPE);
         for (NbtElement listEntry : list) {
             collection.add(NbtHelper.toUuid(listEntry));
         }
