@@ -84,22 +84,22 @@ public abstract class MixinEnderDragonFight {
      */
     @Inject(method = "dragonKilled", at = @At("TAIL"))
     private void generateDragonEggIfNeeded(EnderDragonEntity dragon, CallbackInfo ci) {
-        if (dragon.getUuid().equals(this.dragonUuid)) {
-            Entity killer = ((DamageableEntity)dragon).getKiller();
-            if (killer instanceof ProjectileEntity) {
-                killer = ((ProjectileEntity)killer).getOwner();
-            }
+        if (!dragon.getUuid().equals(this.dragonUuid)) {
+            return;
+        }
 
-            if (killer instanceof PlayerEntity && !this.dragonKilledBy.contains(killer.getUuid())) {
-                this.dragonKilledBy.add(killer.getUuid());
+        Entity killer = EntityHelper.getKiller(dragon);
+        if (!(killer instanceof PlayerEntity) || this.dragonKilledBy.contains(killer.getUuid())) {
+            return;
+        }
 
-                // If the egg hasn't been generated yet by something else (e.g., another mod), generate it now.
-                BlockPos endPortalTop = this.world.getTopPosition(Heightmap.Type.MOTION_BLOCKING, EndPortalFeature.ORIGIN);
-                BlockState existingState = this.world.getBlockState(endPortalTop.offset(Direction.DOWN));
-                if (existingState == null || !existingState.isOf(Blocks.DRAGON_EGG)) {
-                    this.world.setBlockState(endPortalTop, Blocks.DRAGON_EGG.getDefaultState());
-                }
-            }
+        this.dragonKilledBy.add(killer.getUuid());
+
+        // If the egg hasn't been generated yet by something else (e.g., another mod), generate it now.
+        BlockPos endPortalTop = this.world.getTopPosition(Heightmap.Type.MOTION_BLOCKING, EndPortalFeature.ORIGIN);
+        BlockState existingState = this.world.getBlockState(endPortalTop.offset(Direction.DOWN));
+        if (existingState == null || !existingState.isOf(Blocks.DRAGON_EGG)) {
+            this.world.setBlockState(endPortalTop, Blocks.DRAGON_EGG.getDefaultState());
         }
     }
 }

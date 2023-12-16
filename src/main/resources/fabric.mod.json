@@ -19,6 +19,7 @@
   "mixins": [
     "egg-of-capitalism.mixins.json"
   ],
+  "accessWidener": "egg-of-capitalism.accesswidener",
   "custom": {
     "mc-publish": {
       "modrinth": "llThBwQo",

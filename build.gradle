@@ -12,6 +12,10 @@ group = project.maven_group
 version = "${project.mod_version}${getVersionMetadata()}"
 archivesBaseName = "${project.archives_base_name}-mc${minecraftDependencyVersion}"
 
+loom {
+    accessWidenerPath = file("src/main/resources/egg-of-capitalism.accesswidener")
+}
+
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
