@@ -14,6 +14,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -21,7 +22,7 @@ import java.util.UUID;
 public abstract class EnderDragonFightDataMixin implements EnderDragonFightDataExtension {
     public static @Shadow @Final @Mutable Codec<EnderDragonFight.Data> CODEC;
 
-    private Set<UUID> dragonKilledBy;
+    private Set<UUID> dragonKilledBy = new HashSet<>();
 
     @Inject(method = "<clinit>", at = @At("RETURN"))
     private static void registerDragonKilledBy(CallbackInfo ci) {
