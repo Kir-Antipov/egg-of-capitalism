@@ -4,7 +4,8 @@
   "package": "dev.kir.eggofcapitalism.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "MixinEnderDragonFight"
+    "EnderDragonFightMixin",
+    "EnderDragonFightDataMixin"
   ],
   "injectors": {
     "defaultRequire": 1
