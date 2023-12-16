@@ -1,19 +1,15 @@
 package dev.kir.eggofcapitalism.mixin;
 
-import dev.kir.eggofcapitalism.entity.DamageableEntity;
 import dev.kir.eggofcapitalism.util.CompoundHelper;
-import dev.kir.eggofcapitalism.util.OfflineAdvancementManager;
+import dev.kir.eggofcapitalism.util.EntityHelper;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.boss.dragon.EnderDragonFight;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.Heightmap;
@@ -53,16 +49,10 @@ public abstract class MixinEnderDragonFight {
      */
     @Inject(method = "<init>(Lnet/minecraft/server/world/ServerWorld;JLnet/minecraft/nbt/NbtCompound;)V", at = @At("RETURN"))
     private void readDragonKilledByFromTag(ServerWorld world, long l, NbtCompound compoundTag, CallbackInfo ci) {
-    private void onInit(ServerWorld world, long l, NbtCompound compoundTag, CallbackInfo ci) {
+        this.dragonKilledBy = new HashSet<>();
+
         if (compoundTag.contains(DRAGON_KILLED_BY_TAG_NAME)) {
-            this.dragonKilledBy = new HashSet<>();
-            CompoundHelper.copyUuidListTo(compoundTag, DRAGON_KILLED_BY_TAG_NAME, dragonKilledBy);
-        } else if (!world.isClient) {
-            Identifier theEndAdvancement = new Identifier("end/kill_dragon");
-            MinecraftServer server = world.getServer();
-            this.dragonKilledBy = OfflineAdvancementManager.findPlayersByAdvancement(server, theEndAdvancement);
-        } else {
-            this.dragonKilledBy = new HashSet<>();
+            CompoundHelper.copyUuidListTo(compoundTag, DRAGON_KILLED_BY_TAG_NAME, this.dragonKilledBy);
         }
     }
 
