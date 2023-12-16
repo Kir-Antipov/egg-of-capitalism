@@ -20,7 +20,7 @@
     "egg-of-capitalism.mixins.json"
   ],
   "custom": {
-    "modmanager": {
+    "mc-publish": {
       "modrinth": "llThBwQo",
       "curseforge": 490007
     }
