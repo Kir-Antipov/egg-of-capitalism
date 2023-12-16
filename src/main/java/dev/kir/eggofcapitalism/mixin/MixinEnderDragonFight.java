@@ -35,14 +35,12 @@ import java.util.UUID;
  */
 @Mixin(EnderDragonFight.class)
 public abstract class MixinEnderDragonFight {
-    @Shadow
-    private UUID dragonUuid;
+    private @Shadow UUID dragonUuid;
 
-    @Final
-    @Shadow
-    private ServerWorld world;
+    private @Shadow @Final ServerWorld world;
 
     private Set<UUID> dragonKilledBy;
+
     private static final String DRAGON_KILLED_BY_TAG_NAME = "DragonKilledBy";
 
     /**
@@ -54,6 +52,7 @@ public abstract class MixinEnderDragonFight {
      * @param ci Callback information.
      */
     @Inject(method = "<init>(Lnet/minecraft/server/world/ServerWorld;JLnet/minecraft/nbt/NbtCompound;)V", at = @At("RETURN"))
+    private void readDragonKilledByFromTag(ServerWorld world, long l, NbtCompound compoundTag, CallbackInfo ci) {
     private void onInit(ServerWorld world, long l, NbtCompound compoundTag, CallbackInfo ci) {
         if (compoundTag.contains(DRAGON_KILLED_BY_TAG_NAME)) {
             this.dragonKilledBy = new HashSet<>();
@@ -72,8 +71,8 @@ public abstract class MixinEnderDragonFight {
      *
      * @param cir Callback information.
      */
-    @Inject(method = "toNbt()Lnet/minecraft/nbt/NbtCompound;", at = @At("RETURN"), cancellable = true)
-    private void addDragonKilledByToTag(CallbackInfoReturnable<NbtCompound> cir) {
+    @Inject(method = "toNbt()Lnet/minecraft/nbt/NbtCompound;", at = @At("RETURN"))
+    private void writeDragonKilledByToTag(CallbackInfoReturnable<NbtCompound> cir) {
         CompoundHelper.putUuidList(cir.getReturnValue(), DRAGON_KILLED_BY_TAG_NAME, this.dragonKilledBy);
     }
 
