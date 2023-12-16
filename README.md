@@ -23,8 +23,8 @@ This mod approaches the issue from a different angle: each person who **kills th
 ## Installation
 
 Requirements:
- - Minecraft `1.19.x`
- - Fabric Loader `>=0.14.0`
+ - Minecraft `1.20.x`
+ - Fabric Loader `>=0.15.0`
 
 You can download the mod from:
 
